@@ -1,3 +1,4 @@
+import { ACTIONS } from "context/AuthProvider";
 import useAuth from "hooks/useAuth";
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +11,7 @@ const SignOutPage = () => {
     const response = await (
       await fetch("/auth/signout", { method: "POST", credentials: "include" })
     ).json();
-    dispatch({ type: "sign-out" });
+    dispatch({ type: ACTIONS.SIGN_OUT });
     navigate("/", { replace: true });
   };
 

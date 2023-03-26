@@ -2,6 +2,12 @@ import { createContext, useEffect, useReducer } from "react";
 import { useLocation } from "react-router-dom";
 
 export const AuthContext = createContext({});
+export const ACTIONS = {
+  SIGN_IN: "sign-in",
+  SIGN_OUT: "sign-out",
+  REFRESH: "refresh"
+};
+
 const initialState = {};
 
 const setLocalStorage = (key, value) => {
@@ -43,6 +49,9 @@ const reducer = (state, action) => {
       setLocalStorage("auth", token);
       return { ...payload, accessToken: token };
     }
+    default: {
+      return state;
+    }
   }
 };
 
@@ -69,8 +78,8 @@ const AuthProvider = ({ children }) => {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        "x-access-token": token,
-      },
+        "x-access-token": token
+      }
     };
 
     const response = await (await fetch("/auth/verify", options)).json();
@@ -83,9 +92,9 @@ const AuthProvider = ({ children }) => {
     const response = await (
       await fetch("/auth/refresh", { method: "POST", credentials: "include" })
     ).json();
-    if (!response.accessToken) return dispatch({ type: "sign-out" });
+    if (!response.accessToken) return dispatch({ type: ACTIONS.SIGN_OUT });
 
-    dispatch({ type: "refresh", payload: response.accessToken });
+    dispatch({ type: ACTIONS.REFRESH, payload: response.accessToken });
   };
 
   useEffect(() => {

@@ -1,3 +1,4 @@
+import { ACTIONS } from "context/AuthProvider";
 import useAuth from "hooks/useAuth";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -8,7 +9,7 @@ import {
   Container,
   FloatingLabel,
   Form,
-  Row,
+  Row
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
@@ -35,9 +36,9 @@ const SigninForm = ({ from }) => {
         method: "POST",
         credentials: "include",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         },
-        body: JSON.stringify(form),
+        body: JSON.stringify(form)
       };
 
       const response = await (await fetch(LOGIN_URL, options)).json();
@@ -47,7 +48,7 @@ const SigninForm = ({ from }) => {
         return setError(true);
       }
 
-      dispatch({ type: "sign-in", payload: response.accessToken });
+      dispatch({ type: ACTIONS.SIGN_IN, payload: response.accessToken });
       navigate(from, { replace: true });
     } catch (err) {
       console.error(err);

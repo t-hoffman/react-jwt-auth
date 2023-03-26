@@ -1,3 +1,4 @@
+import { ACTIONS } from "context/AuthProvider";
 import useAuth from "hooks/useAuth";
 import React from "react";
 import { Container, Nav, Navbar } from "react-bootstrap";
@@ -28,7 +29,7 @@ const Layout = () => {
             </Nav.Item>
             {state.accessToken && (
               <Nav.Item className="ms-auto">
-                <Nav.Link onClick={() => dispatch({ type: "sign-out" })}>
+                <Nav.Link onClick={() => dispatch({ type: ACTIONS.SIGN_OUT })}>
                   Sign out
                 </Nav.Link>
               </Nav.Item>
