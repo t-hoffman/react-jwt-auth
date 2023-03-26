@@ -31,23 +31,16 @@ const getLocalStorage = (key, initialValue) => {
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "sign-in": {
+    case ACTIONS.SIGN_IN && ACTIONS.REFRESH: {
       const token = action.payload;
       const payload = JSON.parse(atob(token.split(".")[1]));
-
       setLocalStorage("auth", token);
+
       return { ...payload, accessToken: token };
     }
-    case "sign-out": {
+    case ACTIONS.SIGN_OUT: {
       setLocalStorage("auth", initialState);
       return initialState;
-    }
-    case "refresh": {
-      const token = action.payload;
-      const payload = JSON.parse(atob(token.split(".")[1]));
-
-      setLocalStorage("auth", token);
-      return { ...payload, accessToken: token };
     }
     default: {
       return state;
@@ -92,6 +85,7 @@ const AuthProvider = ({ children }) => {
     const response = await (
       await fetch("/auth/refresh", { method: "POST", credentials: "include" })
     ).json();
+
     if (!response.accessToken) return dispatch({ type: ACTIONS.SIGN_OUT });
 
     dispatch({ type: ACTIONS.REFRESH, payload: response.accessToken });
