@@ -34,6 +34,7 @@
   "proxy": "http://localhost:4000/api",
   "devDependencies": {
     "eslint": "^8.36.0",
-    "eslint-plugin-react": "^7.32.2"
+    "eslint-plugin-react": "^7.32.2",
+    "prettier": "2.8.7"
   }
 }
