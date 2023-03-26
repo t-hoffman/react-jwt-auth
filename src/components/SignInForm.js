@@ -1,53 +1,62 @@
-import useAuth from 'hooks/useAuth';
-import React, { useEffect, useRef, useState } from 'react';
-import { Alert, Button, Card, Col, Container, FloatingLabel, Form, Row } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import useAuth from "hooks/useAuth";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  Alert,
+  Button,
+  Card,
+  Col,
+  Container,
+  FloatingLabel,
+  Form,
+  Row,
+} from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
-const LOGIN_URL = '/auth/signin';
-const initialForm = { username: '', password: '' }
+const LOGIN_URL = "/auth/signin";
+const initialForm = { username: "", password: "" };
 
 const SigninForm = ({ from }) => {
-  const [form, setForm] = useState(initialForm)
-  const [error, setError] = useState(false)
-  const userRef = useRef()
-  const { dispatch } = useAuth()
-  const navigate = useNavigate()
+  const [form, setForm] = useState(initialForm);
+  const [error, setError] = useState(false);
+  const userRef = useRef();
+  const { dispatch } = useAuth();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { id, value } = e.target;
-    setForm({ ...form, [id]: value })
-  }
+    setForm({ ...form, [id]: value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       const options = {
-        method: 'POST',
-        credentials: 'include',
+        method: "POST",
+        credentials: "include",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(form)
-      }
+        body: JSON.stringify(form),
+      };
 
-      const response = await (await fetch(LOGIN_URL, options)).json()
-      setForm(initialForm)
+      const response = await (await fetch(LOGIN_URL, options)).json();
+      setForm(initialForm);
 
       if (!response.accessToken) {
-        return setError(true)
+        return setError(true);
       }
 
-      dispatch({ type: 'sign-in', payload: response.accessToken })
-      navigate(from, { replace: true })
+      dispatch({ type: "sign-in", payload: response.accessToken });
+      navigate(from, { replace: true });
     } catch (err) {
-      console.error(err)
+      console.error(err);
     }
-  }
+  };
 
   useEffect(() => {
-    userRef.current.focus()
-  }, [])
+    userRef.current.focus();
+  }, []);
 
   return (
     <Container>
@@ -58,7 +67,11 @@ const SigninForm = ({ from }) => {
               <Card.Title>Sign In</Card.Title>
             </Card.Header>
             <Card.Body>
-              {error && <Alert variant="danger">Invalid login credentials, please try again.</Alert>}
+              {error && (
+                <Alert variant="danger">
+                  Invalid login credentials, please try again.
+                </Alert>
+              )}
               <Form autoComplete="off" onSubmit={handleSubmit}>
                 <FloatingLabel label="Username" className="mb-3">
                   <Form.Control
@@ -90,7 +103,7 @@ const SigninForm = ({ from }) => {
         </Col>
       </Row>
     </Container>
-  )
-}
+  );
+};
 
-export default SigninForm
+export default SigninForm;

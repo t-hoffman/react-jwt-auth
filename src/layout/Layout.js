@@ -1,11 +1,11 @@
-import useAuth from 'hooks/useAuth'
-import React from 'react'
-import { Container, Nav, Navbar } from 'react-bootstrap'
-import { Link, Outlet, useNavigate } from 'react-router-dom'
+import useAuth from "hooks/useAuth";
+import React from "react";
+import { Container, Nav, Navbar } from "react-bootstrap";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 
 const Layout = () => {
-  const { state, dispatch } = useAuth()
-  const navigate = useNavigate()
+  const { state, dispatch } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <>
@@ -16,27 +16,29 @@ const Layout = () => {
             <Nav.Item>
               <Nav.Link href="/">Home</Nav.Link>
             </Nav.Item>
-            {state.accessToken && 
+            {state.accessToken && (
               <Nav.Item>
                 <Nav.Link href="user">User</Nav.Link>
               </Nav.Item>
-            }
+            )}
             <Nav.Item>
-              <Nav.Link href="test" className="ml-auto">Test</Nav.Link>
+              <Nav.Link href="test" className="ml-auto">
+                Test
+              </Nav.Link>
             </Nav.Item>
-            {state.accessToken && 
+            {state.accessToken && (
               <Nav.Item className="ms-auto">
-                <Nav.Link onClick={() => dispatch({ type: 'sign-out' })}>Sign out</Nav.Link>
+                <Nav.Link onClick={() => dispatch({ type: "sign-out" })}>
+                  Sign out
+                </Nav.Link>
               </Nav.Item>
-            }
+            )}
           </Nav>
         </Container>
       </Navbar>
-      <Container className="p-3">
-        {<Outlet />}
-      </Container>
+      <Container className="p-3">{<Outlet />}</Container>
     </>
-  )
-}
+  );
+};
 
-export default Layout
+export default Layout;
