@@ -31,7 +31,9 @@ const getLocalStorage = (key, initialValue) => {
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case ACTIONS.SIGN_IN && ACTIONS.REFRESH: {
+    case ACTIONS.SIGN_IN:
+    case ACTIONS.REFRESH: {
+      console.log("SIGNIN/REFRESH");
       const token = action.payload;
       const payload = JSON.parse(atob(token.split(".")[1]));
       setLocalStorage("auth", token);
@@ -43,6 +45,7 @@ const reducer = (state, action) => {
       return initialState;
     }
     default: {
+      console.log("DEFAULT");
       return state;
     }
   }
