@@ -12,18 +12,18 @@ const Layout = () => {
     <>
       <Navbar bg="dark" variant="dark">
         <Container>
-          <Navbar.Brand href="/">Navbar</Navbar.Brand>
+          <Navbar.Brand onClick={() => navigate("/")}>Navbar</Navbar.Brand>
           <Nav className="container-fluid">
             <Nav.Item>
-              <Nav.Link href="/">Home</Nav.Link>
+              <Nav.Link onClick={() => navigate("/")}>Home</Nav.Link>
             </Nav.Item>
             {state.accessToken && (
               <Nav.Item>
-                <Nav.Link href="user">User</Nav.Link>
+                <Nav.Link onClick={() => navigate("user")}>User</Nav.Link>
               </Nav.Item>
             )}
             <Nav.Item>
-              <Nav.Link href="test" className="ml-auto">
+              <Nav.Link onClick={() => navigate("test")} className="ml-auto">
                 Test
               </Nav.Link>
             </Nav.Item>

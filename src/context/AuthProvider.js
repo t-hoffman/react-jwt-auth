@@ -33,7 +33,6 @@ const reducer = (state, action) => {
   switch (action.type) {
     case ACTIONS.SIGN_IN:
     case ACTIONS.REFRESH: {
-      console.log("SIGNIN/REFRESH");
       const token = action.payload;
       const payload = JSON.parse(atob(token.split(".")[1]));
       setLocalStorage("auth", token);
@@ -45,7 +44,6 @@ const reducer = (state, action) => {
       return initialState;
     }
     default: {
-      console.log("DEFAULT");
       return state;
     }
   }
@@ -94,15 +92,12 @@ const AuthProvider = ({ children }) => {
     dispatch({ type: ACTIONS.REFRESH, payload: response.accessToken });
   };
 
-  useEffect(() => {
-    try {
-      const exp = new Date(state.exp * 1000);
-      console.log("token expires:", exp.toLocaleString("en-us"));
-      if (exp < Date.now()) verifyToken(state.accessToken);
-    } catch (err) {
-      console.log(err);
-    }
-  }, [location, state.accessToken]);
+  try {
+    const exp = new Date(state.exp * 1000);
+    console.log("token expires:", exp.toLocaleString("en-us"));
+
+    if (exp < Date.now()) verifyToken(state.accessToken);
+  } catch (err) {}
 
   return (
     <AuthContext.Provider value={{ state, dispatch }}>
