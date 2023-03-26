@@ -10,12 +10,12 @@ import Layout from 'layout/Layout';
 import { Route, Routes } from 'react-router-dom';
 
 const Home = () => {
-  const { auth } = useAuth()
+  const { state } = useAuth()
 
   return (
     <>
       Home page:<br />
-      {!auth.accessToken && <SigninForm />}
+      {!state.accessToken && <SigninForm />}
     </>
   );
 }

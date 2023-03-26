@@ -1,12 +1,14 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useEffect, useReducer } from 'react';
+import { useLocation } from 'react-router-dom';
 
 export const AuthContext = createContext({});
+const initialState = {}
 
 const setLocalStorage = (key, value) => {
   try {
     window.localStorage.setItem(key, JSON.stringify(value))
   } catch (error) {
-    console.error(error)
+    console.error('setLocal',error)
   }
 }
 
@@ -15,15 +17,30 @@ const getLocalStorage = (key, initialValue) => {
     const value = window.localStorage.getItem(key)
     return value ? JSON.parse(value) : initialValue
   } catch (error) {
+    console.log('getLocal',error)
     return initialValue
   }
 }
 
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'sign-in':
+      setLocalStorage('auth', action.payload)
+      return action.payload
+    case 'sign-out':
+      setLocalStorage('auth', initialState)
+      return initialState
+    case 'refresh':
+      setLocalStorage('auth', { ...state, accessToken: action.payload })
+      return {...state, accessToken: action.payload}
+  }
+}
+  
 const AuthProvider = ({ children }) => {
-  const [auth, setAuth] = useState(() => getLocalStorage('auth', {}))
+  const [state, dispatch] = useReducer(reducer, getLocalStorage('auth', initialState))
+  const location = useLocation()
 
   const verifyToken = async (token) => {
-    console.log('verify')
     const options = {
       method: 'POST',
       credentials: 'include',
@@ -41,22 +58,17 @@ const AuthProvider = ({ children }) => {
 
   const refreshToken = async () => {
     const response = await (await fetch('/auth/refresh', { method: 'POST', credentials: 'include' })).json()
+    if (!response.accessToken) return dispatch({ type: 'sign-out' })
 
-    if (!response.accessToken) return setAuth({})
-
-    setAuth({...auth, accessToken: response.accessToken})
+    dispatch({ type: 'refresh', payload: response.accessToken })
   }
 
   useEffect(() => {
-    if (auth.accessToken) verifyToken(auth.accessToken)
-  }, [auth.accessToken])
+    if (state.accessToken) verifyToken(state.accessToken)
+  }, [location])
 
-  useEffect(() => {
-    setLocalStorage('auth', auth)
-  }, [auth])
-  console.log(auth)
   return (
-    <AuthContext.Provider value={{ auth, setAuth }}>
+    <AuthContext.Provider value={{ state, dispatch }}>
       {children}
     </AuthContext.Provider>
   );

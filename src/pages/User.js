@@ -2,12 +2,12 @@ import useAuth from 'hooks/useAuth'
 import React from 'react'
 
 const User = () => {
-  const { auth } = useAuth()
+  const { state } = useAuth()
 
   return (
     <div>
       User page:<br />
-      Welcome, {auth.username}! ACCESS_TOKEN: {auth.accessToken}
+      Welcome, {state.username}! ACCESS_TOKEN: {state.accessToken}
     </div>
   )
 }

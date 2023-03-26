@@ -5,7 +5,7 @@ import SigninForm from '../components/SignInForm'
 const SignInPage = () => {
   const location = useLocation()
   const from = location.state?.from.pathname || '/'
-console.log(from)
+
   return (
     <div>
       Sign in page:<br />

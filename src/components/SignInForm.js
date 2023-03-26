@@ -7,16 +7,16 @@ const LOGIN_URL = '/auth/signin';
 const initialForm = { username: '', password: '' }
 
 const SigninForm = ({ from }) => {
-  const [form, setForm] = useState(initialForm);
+  const [form, setForm] = useState(initialForm)
   const [error, setError] = useState(false)
-  const userRef = useRef();
-  const { setAuth } = useAuth()
+  const userRef = useRef()
+  const { dispatch } = useAuth()
   const navigate = useNavigate()
 
   const handleChange = (e) => {
     const { id, value } = e.target;
-    setForm({ ...form, [id]: value });
-  };
+    setForm({ ...form, [id]: value })
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,30 +24,30 @@ const SigninForm = ({ from }) => {
     try {
       const options = {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(form),
-        credentials: 'include'
-      };
+        body: JSON.stringify(form)
+      }
 
-      const response = await (await fetch(LOGIN_URL, options)).json();
+      const response = await (await fetch(LOGIN_URL, options)).json()
+      setForm(initialForm)
 
       if (!response.accessToken) {
-        setForm(initialState)
         return setError(true)
       }
 
-      setAuth(response)
+      dispatch({ type: 'sign-in', payload: response })
       navigate(from, { replace: true })
     } catch (err) {
       console.error(err)
     }
-  };
+  }
 
   useEffect(() => {
-    if (userRef.current) userRef.current.focus();
-  }, []);
+    userRef.current.focus()
+  }, [])
 
   return (
     <Container>
@@ -67,7 +67,7 @@ const SigninForm = ({ from }) => {
                     placeholder="name@yoursite.com"
                     autoComplete="off"
                     onChange={handleChange}
-                    value={form.user}
+                    value={form.username}
                     ref={userRef}
                   />
                 </FloatingLabel>
@@ -90,7 +90,7 @@ const SigninForm = ({ from }) => {
         </Col>
       </Row>
     </Container>
-  );
-};
+  )
+}
 
-export default SigninForm;
+export default SigninForm
