@@ -38,7 +38,7 @@ const SigninForm = ({ from }) => {
         return setError(true)
       }
 
-      dispatch({ type: 'sign-in', payload: response })
+      dispatch({ type: 'sign-in', payload: response.accessToken })
       navigate(from, { replace: true })
     } catch (err) {
       console.error(err)

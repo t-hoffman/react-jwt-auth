@@ -8,39 +8,62 @@ const setLocalStorage = (key, value) => {
   try {
     window.localStorage.setItem(key, JSON.stringify(value))
   } catch (error) {
-    console.error('setLocal',error)
+    console.error('setLocal error:',error)
   }
 }
 
 const getLocalStorage = (key, initialValue) => {
   try {
     const value = window.localStorage.getItem(key)
+    console.log('GETTER', value)
     return value ? JSON.parse(value) : initialValue
   } catch (error) {
-    console.log('getLocal',error)
+    console.log('getLocal error:',error)
     return initialValue
   }
 }
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case 'sign-in':
-      setLocalStorage('auth', action.payload)
-      return action.payload
-    case 'sign-out':
+    case 'sign-in': {
+      const token = action.payload
+      const payload = JSON.parse(atob(token.split('.')[1]))
+
+      setLocalStorage('auth', token)
+      return { ...payload, accessToken: token }
+    }
+    case 'sign-out': {
       setLocalStorage('auth', initialState)
       return initialState
-    case 'refresh':
-      setLocalStorage('auth', { ...state, accessToken: action.payload })
-      return {...state, accessToken: action.payload}
+    }
+    case 'refresh': {
+      const token = action.payload
+      const payload = JSON.parse(atob(token.split('.')[1]))
+
+      setLocalStorage('auth', token)
+      return { ...payload, accessToken: token }
+    }
+  }
+}
+
+const initializer = (init) => {
+  try {
+    const accessToken = getLocalStorage('auth')
+    const payload = JSON.parse(atob(accessToken.split('.')[1]))
+    return { ...payload, accessToken }
+  } catch (err) {
+    return init
   }
 }
   
 const AuthProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(reducer, getLocalStorage('auth', initialState))
+  const [state, dispatch] = useReducer(reducer, initialState, initializer)
   const location = useLocation()
 
+  console.log(state)
+
   const verifyToken = async (token) => {
+    console.log('verify')
     const options = {
       method: 'POST',
       credentials: 'include',
@@ -64,8 +87,13 @@ const AuthProvider = ({ children }) => {
   }
 
   useEffect(() => {
-    if (state.accessToken) verifyToken(state.accessToken)
-  }, [location])
+    try {
+      const exp = new Date(state.exp * 1000)
+      if (exp < Date.now()) verifyToken(state.accessToken)
+    } catch(err) {
+      console.log(err)
+    }
+  }, [location, state.accessToken])
 
   return (
     <AuthContext.Provider value={{ state, dispatch }}>
